@@ -13,6 +13,7 @@ RUN apt-get update && \
     libxml2-dev \
     libxslt1-dev \
     libssl-dev \
+    git \
     && apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -30,10 +31,11 @@ RUN python -m venv /opt/venv && \
 COPY . .
 
 # Set environment variables
-ENV PATH="/opt/venv/bin:$PATH"
+ENV PATH="/opt/venv/bin:$PATH" \
+    PYTHONPATH="/app"
 
 # Expose port
 EXPOSE 8080
 
 # Run the application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080", "--reload"]

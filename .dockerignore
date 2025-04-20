@@ -8,3 +8,15 @@ pip-log.txt
 .DS_Store
 .git
 .gitignore
+*.log
+*.pdf
+*.csv
+*.json
+tests/
+docs/
+.vscode/
+.idea/
+*.md
+*.txt
+!requirements.txt
+!README.md
