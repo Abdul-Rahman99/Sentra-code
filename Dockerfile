@@ -1,31 +1,29 @@
-# Use the official Python image from Docker Hub
-FROM alpine
+# Use the official Python slim image
+FROM python:3.12-slim
 
-# Set the working directory inside the container
+# Set working directory
 WORKDIR /app
 
-RUN apk update && \
-    apk add nmap && \
-    apk add nmap-scripts && \
-    apk add python3 && \
-    apk add py3-pip
-    #rm -rf /var/lib/apt/lists/*
+# Install system dependencies required for Wapiti and other packages
+RUN apt-get update && \
+    apt-get install -y nmap python3-venv gcc libffi-dev libxml2-dev libxslt1-dev libssl-dev && \
+    apt-get clean
 
-# Copy the requirements.txt file and install dependencies
-COPY requirements.txt /app/
+# Copy requirements and install dependencies
+COPY requirements.txt .
 
-RUN python3 -m venv env && \
-    ./env/bin/pip3 install -r requirements.txt && \
-    # this to comment the "codeset" keyword argument from the language model in wapiti package
-    # it crashes wapiti when left used on alpine linux
-    sed -i "s/codeset/#codeset/" env/lib/python3.12/site-packages/wapitiCore/language/language.py
+# Create venv and install packages
+RUN python -m venv env && \
+    ./env/bin/pip install --upgrade pip && \
+    ./env/bin/pip install -r requirements.txt && \
+    # Fix the wapiti crash on 'codeset'
+    sed -i "s/codeset/#codeset/" env/lib/python3.12/site-packages/wapitiCore/language/language.py || true
 
+# Copy the rest of the app
+COPY . .
 
-# Copy the FastAPI app
-COPY . /app/
-
-# Expose port 8080 for Cloud Run
+# Expose port for Uvicorn
 EXPOSE 8080
 
-# Command to run the FastAPI app with Uvicorn
+# Run the app
 CMD ["./env/bin/uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]

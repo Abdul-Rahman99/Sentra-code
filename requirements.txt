@@ -7,3 +7,6 @@ uvicorn
 wapiti3
 jinja2
 python-multipart
+fastapi==0.110.0
+uvicorn==0.29.0
+wapiti3==3.1.6
