@@ -15,7 +15,7 @@ import dns.resolver
 import csv
 from io import StringIO
 
-from app import report_generator as repoGen
+import report_generator as repoGen
 
 
 app = FastAPI()
