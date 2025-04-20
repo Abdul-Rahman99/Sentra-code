@@ -1,5 +1,5 @@
 # Use the official Python slim image
-FROM python:3.12-slim
+FROM python:3.11-slim
 
 # Set working directory
 WORKDIR /app
@@ -21,18 +21,14 @@ RUN apt-get update && \
 COPY requirements.txt .
 
 # Install Python dependencies
-RUN python -m venv /opt/venv && \
-    /opt/venv/bin/pip install --upgrade pip && \
-    /opt/venv/bin/pip install --no-cache-dir -r requirements.txt && \
-    # Fix wapiti crash
-    sed -i "s/codeset/#codeset/" /opt/venv/lib/python3.12/site-packages/wapitiCore/language/language.py
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY . .
 
 # Set environment variables
-ENV PATH="/opt/venv/bin:$PATH" \
-    PYTHONPATH="/app"
+ENV PYTHONPATH="/app"
 
 # Expose port
 EXPOSE 8080
